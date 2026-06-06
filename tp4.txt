@@ -1,0 +1,73 @@
+Threads et synchronisation avec sémaphores¶
+Objectifs¶
+Mettre en oeuvre des programmes multithreadés
+Mettre en oeuvre des mécanismes de synchronisation de programmes multithreadés reposant sur les sémaphores
+Remarques préliminaires¶
+La commande make permet de compiler un programme dont les sources sont réparties sur plusieurs fichiers. Pour une description simple et suffisante pour nos séances de make et des fichiers makefile, on peut lire ce tutoriel.
+Il existe de nombreux outils très utiles au développement regroupés dans le projet GNU. Vous pouvez lire ce document d'introduction aux outils de développement GNU.
+Dans la suite de l'énoncé on appellera bibliothèque un ensemble composé d'un fichier .c et d'un fichier .h pouvant contenir des définitions de type, des fonctions et des procédures mais pas de fonction main().
+Consigne générale :
+on écrira un makefile permettant de compiler chacun des programmes demandés.
+À la fin du TD, le fait d'exécuter la commande make devra recompiler chacun des exercices de ce TD.
+Avant toute programmation, vous devez lire l'énoncé de l'exercice jusqu'au bout !
+I - Threads, données partagées et synchronisation de threads¶
+Afin de paralléliser les traitements il est souvent intéressant de diviser un programme en plusieurs fils d’exécution. Dans cet exercice, on considère le cas d'un serveur devant transmettre des messages. On trouvera un (ou plusieurs) thread(s) pour lire dans une (ou plusieurs) source(s) et un (ou plusieurs threads) chargé(s) de transmettre des données. Dans ce contexte les threads chargés de la lecture et ceux chargés de l'écriture doivent partager une zone de la mémoire. On a donc le schéma simplifié suivant :
+
+threads
+
+L'objectif de cet exercice est d'implanter le schéma ci-dessus. L'étape 1 du thread 1 et l'étape 2 du thread 2 seront réalisées avec la bibliothèque permettant de lire et écrire des lignes dans un fichier implémentée lors du TD-machine 1 de l'unité de systèmes d'exploitation. Lors de ce TD vous avez ainsi du obtenir deux fichiers sources qui ressemblent fortement à ceux-ci :
+
+gestionFichiers.h
+gestionFichiers.c
+La source sera le fichier texte
+
+Source.txt
+et la destination sera un fichier texte Destination.txt.
+
+A. Implémentation brute force¶
+Implantez le schéma ci-dessus.
+
+La mémoire partagée sera un buffer de char déclaré comme variable globale par :
+
+
+char buffer[MAX];
+Si vous êtes en avance vous pouvez proposer une solution où le buffer est alloué dynamiquement dans le fils d'exécution principal et transmis aux threads concurrents via les paramètres de leur routine d'exécution.
+
+B. On réfléchit¶
+Quel est le problème de la solution A ? Proposez (sans l'implémenter) un schéma de solution au problème de A avec un mutex.
+
+C. On réfléchit encore puis on programme¶
+Quel est le problème avec votre solution précédante ? Proposez une solution avec deux sémaphores.
+
+Attention, votre programme doit fonctionner quelque soit la taille du buffer d'échange partagé entre les thread. Si le buffer d'échange est plus petit que la taille d'une ligne, cela veut dire que le thread 2 doit pouvoir lire les caractères un par un dans le buffer partagé, sans pour autant les écrire (puisqu'il écrit avec ecritLigne() une ligne entière). Il faudra certainement penser à utiliser un buffer local supplémentaire dans le thread 2... De plus le thread 2 doit pouvoir se terminer lorsque le thread 1 n'écrit plus. Pour cela le thread 1 pourra terminer par un ajout du caractère spécial EOF dans le buffer partagé.
+
+Compilation
+
+Pour compiler un programme qui se sert des threads, il faut ajouter l'option -lpthread à la commande d'édition des liens.
+
+II - Threads concurrents¶
+On a 3 threads 
+, 
+, et 
+ concurrents. Le code indépendant de chaque thread 
+ (i=1,2,3) est le suivant :
+
+
+for(j = 0; j < 10; j++)
+    printf("Affichage %d du thread %d\n", j+1, i); // Thread Pi avec i = 1, 2, 3
+A. Réflexion¶
+Indiquez comment synchroniser les threads P1, P2 et P3 avec des sémaphores pour obtenir l'affichage suivant :
+
+
+Affichage 1 du thread 1
+Affichage 1 du thread 2 
+Affichage 1 du thread 3 
+Affichage 2 du thread 1 
+Affichage 2 du thread 2
+Affichage 2 du thread 3
+Affichage 3 du thread 1
+Affichage 3 du thread 2
+Affichage 3 du thread 3 
+...
+B. Action¶
+Programmez la solution décrite à la question précédente.

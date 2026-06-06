@@ -1,0 +1,59 @@
+TD-Machine 3 : Communication inter-processus¶
+Objectifs¶
+Connaître et mettre en oeuvre des communications inter-processus par tubes
+Connaître et mettre en oeuvre des communications inter-processus par signal
+Remarques préliminaires¶
+La commande make permet de compiler un programme dont les sources sont réparties sur plusieurs fichiers. Pour une description simple et suffisante pour nos séances de make et des fichiers makefile, on peut lire ce tutoriel.
+Il existe de nombreux outils très utiles au développement regroupés dans le projet GNU. Vous pouvez lire ce document d'introduction aux outils de développement GNU.
+Dans la suite de l'énoncé on appellera bibliothèque un ensemble composé d'un fichier .c et d'un fichier .h pouvant contenir des définitions de type, des fonctions et des procédures mais pas de fonction main().
+Consigne générale :
+on écrira un makefile permettant de compiler chacun des programmes demandés.
+À la fin du TD, le fait d'exécuter la commande make devra recompiler chacun des exercices de ce TD.
+Avant toute programmation, vous devez lire l'énoncé de l'exercice jusqu'au bout !
+I - Communications inter-processus¶
+Dans le cadre d'applications informatiques distribuées, plusieurs processus qui correspondent entre autres à des serveurs sont souvent amenés à communiquer entre eux. Le comportement simplifié d'un serveur consiste à répéter indéfiniment trois étapes :>
+
+Lire un message
+Analyser son contenu
+Transmettre le message
+Dans cet exercice vous allez simuler l'échange de messages entre deux serveurs A et B. Voici une brève description du fonctionnement de ces deux serveurs.
+
+Le serveur A :
+
+lit des messages depuis une source (étape 1),
+analyse leur contenu (étape 2),
+et en fonction de cette analyse choisit ou non de les transmettre au serveur B via un "canal de transmission" (étape 3).
+Symétriquement, le serveur B :
+
+écoute les messages envoyés par le serveur A sur le "canal de transmission" (étape 1),
+analyse leur contenu (étape 2),
+et en fonction de cette analyse choisit ou non de les transmettre à une certaine destination (étape 3).
+A - Reflexions¶
+Dessinez sur papier le schéma qui correspond à la description donnée ci-dessus. Pour cela, vous pouvez utiliser le code graphique donné ci-dessous et supposer que la source du serveur A et la destination du serveur B sont des fichiers texte.
+
+charte
+
+B - Mise en œuvre¶
+L'objectif de cette question est de mettre en œuvre ce que vous avez dessiné sur papier. Pour réaliser les lectures et écritures vous devez utiliser la bibliothèque permettant de lire et écrire des lignes dans un fichier implémentée lors du TD-machine 1. Lors de ce TD vous avez ainsi du obtenir deux fichiers sources qui ressemblent fortement à ceux-ci :
+
+gestionFichiers.h
+gestionFichiers.c
+1. Canal de transmission ?¶
+Quelles méthodes voyez vous pour implémenter le "Canal de transmission" entre les serveurs A et B ? Dans quel cas utilisez vous une méthode plutôt qu'une autre ?
+
+2. Programmation¶
+Écrivez un programme qui se dédouble et pour lequel le père exécute le code correspondant au serveur A et le fils celui du serveur B.
+
+Laquelle des méthodes proposées à la question I-B-1 est la plus adaptée ?
+
+Pour simplifier, les étapes de traitement (numérotées 2) sont supposées vides et les serveurs choisissent toujours de transmettre les messages.
+
+Le serveur A effectue la lecture de tous ses messages à partir du fichier Source.txt donné ci-dessous.
+
+Source.txt
+Le serveur B écrit tous ses messages dans un fichier texte que vous nommez Destination.txt.
+
+III - Processus et signaux¶
+L'objectif de cet exercice est d'implémenter un programme qui simule l'ouverture d'un coffre fort protégé par le code secret "1234". Au lancement du programme, l'utilisateur est invité à taper au clavier un code secret. Si l'utilisateur met plus de 10 secondes à entrer un code alors le programme affiche "Trop tard : coffre-fort fermé". S'il tape un mauvais code alors le programme affiche "Code faux : coffre-fort fermé". Sinon, le programme affiche "Bravo : coffre-fort ouvert".
+
+Pour réaliser cette simulation, vous utiliserez deux processus. Le premier est chargé de lire et vérifier le code tapé sur l'entrée standard. Le second comptera 10 secondes et signalera au premier processus qu'il est trop tard. Pour compter 10 secondes, vous pouvez utiliser la fonction sleep().

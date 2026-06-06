@@ -1,0 +1,101 @@
+IGI 3004 - Syst`eme d’exploitation
+Responsable Jean Cousty
+TD #1
+Instructions
+— Ne vous contentez pas d’´ecrire un r´esultat. Justifiez et commentez vos r´eponses.
+— Pour les r´eponses qui demandent des programmes ou des morceaux de programmes, vous pouvez
+utiliser du code C ou n’importe quel style de pseudo-code suffisamment raisonnable (i.e., la syntaxe
+et la s´emantique du programme doivent ˆetre claires).
+— Des r´eponses longues ne sont pas n´ecessaires. La plupart des questions sont con¸cues pour une
+r´eponse br`eve, de l’ordre d’un paragraphe.
+— Lisez l’´enonc´e d’un exercice jusqu’au bout avant de commencer `a r´epondre `a la premi`ere question.
+Fork et exec
+Question 1. Pour chacun des programmes ci-dessous :
+— d´ecrivez le d´eroulement du programme ;
+— dessinez l’arbre de cr´eation des processus ;
+— indiquez le nombre de processus cr´e´es `a l’ex´ecution du programme ;
+— indiquez si l’affichage est le mˆeme `a chaque ex´ecution et donnez un affichage possible.
+/* Programme 1 */
+1 int main(){
+2 int pid, i;
+3 for (i = 1 ; i <= 4 ; i++) {
+4 pid = fork();
+5 if(pid != 0) printf(“%d \n”, pid);
+}
+}
+/* Programme 2 */
+1 int main(){
+2 int pid, i;
+3 for (i = 1 ; i <= 4 ; i++) {
+4 pid = fork();
+5 if(pid == 0) break;
+else printf(“%d \n”, pid);
+}
+}
+1
+/* Programme 3 */
+1 int main(){
+2 int pid, i, nb = 4;
+3 for (i = 1 ; i <= 4 ; i++) {
+4 pid = fork();
+5 if(pid == 0) execlp(”ls”, ”ls”, NULL);
+6 if(pid < 0) exit(1);
+}
+7 while(wait(NULL) > 0);
+8 printf(”ls se r´ep`ete\n”);
+}
+/* Programme 4 */
+1 int main(){
+2 int pid, i;
+3 for (i = 1 ; i <= 4 ; i++) {
+4 pid = fork();
+5 if(pid < 0) exit(1);
+execlp(”ls”, ”ls”,NULL);
+}
+while(wait(NULL)>0);
+printf(”ls se r´ep`ete\n”);
+}
+/* Programme 5 */
+1 int main(){
+2 int pid1, pid2, i;
+3 for (i = 1 ; i <= 4 ; i++) {
+4 pid1 = fork();
+5 pid2 = fork();
+6 if(pid1 < 0) exit(1);
+7 if(pid2 < 0) exit(2);
+8 execlp(”ls”, ”ls”,NULL);
+9 execlp(”pwd”, ”pwd”,NULL);
+}
+10 while(wait(NULL) > 0);
+11 printf(”pwd se r´ep`ete\n”);
+}
+Question 2. Etant donn´e deux programmes nomm´es client et serveur, ´ecrivez un programme qui g´en`ere ´
+l’ex´ecution simultan´ee de 4 clients et d’un serveur.
+Tubes
+Un d´eveloppeur souhaite utiliser dans un programme une fonction void mystere(void), dont il n’a
+pas le code source mais qui fonctionne parfaitement bien. La fonction mystere() g´en`ere un certain volume
+d’octets sur sa sortie standard. Le d´eveloppeur souhaite donc ´ecrire un programme qui r´ecup`ere les octets
+produits par la fonction mystere(void) dans un tampon de nom buf pour pouvoir leur appliquer certains
+traitements ult´erieurement. Pour simplifier, on suppose que le volume des octets produits est toujours
+inf´erieur `a GRANDE_TAILLE octets. Voici le code propos´e par le d´eveloppeur pour r´ealiser cette sorte de
+redirection.
+2
+1 int main(){
+2 char buf[GRANDE TAILLE];
+3 int tube[2], n;
+4 pipe(tube);
+/* La ligne suivante redirige la sortie standard sur l’entr´ee du tube/ */
+5 dup2(tube[1],1);
+close(tube[1]);
+6 mystere();
+/* Lire les donn´ees du tube et les mettre dans le tampon buf */
+7 n = read(tube[0], buf, GRANDE TAILLE);
+/* Traite le tampon buf... */
+}
+Le programme fonctionne lorsque le volume d’octets g´en´er´es par la fonction mystere est petit mais ne
+se termine pas lorsque le volume devient trop important (tout en restant inf´erieur `a GRANDE_TAILLE.
+Question 1. Expliquez ce comportement. A quoi correspond la valeur seuil `a partir de laquelle le `
+programme ne fonctionne plus ?
+Question 2. Proposez une nouvelle version du programme qui fonctionne pour tout volume d’octets
+compris entre 0 et GRANDE_TAILLE.
+3

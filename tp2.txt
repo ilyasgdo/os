@@ -1,0 +1,58 @@
+TD-Machine 2 : Processus sous Unix¶
+Objectifs¶
+Connaître et mettre en oeuvre le mécanisme de création de processus en C sous Linux
+Connaître et mettre en oeuvre une première solution de synchronisation entre un processus père et son fils
+Connaître et mettre en oeuvre la notion de recouvrement de processus
+Connaître et tester la sémantique de partage de fichiers entre processus parent et enfant
+S'exercer à écrire et à compiler de (petits) projets avec l'utilitaire make
+Remarques préliminaires : environnement de développement : make et gcc¶
+La commande make permet de compiler un programme dont les sources sont réparties sur plusieurs fichiers. Pour une description simple et suffisante pour nos séances de make et des fichiers makefile, on peut lire ce tutoriel.
+Il existe de nombreux outils très utiles au développement regroupés dans le projet GNU. Vous pouvez lire ce document d'introduction aux outils de développement GNU.
+Dans la suite de l'énoncé on appellera bibliothèque un ensemble composé d'un fichier .c et d'un fichier .h pouvant contenir des définitions de type, des fonctions et des procédures mais pas de fonction main().
+Consigne générale :
+on écrira un makefile permettant de compiler chacun des programmes demandés.
+À la fin du TD, le fait d'exécuter la commande make devra recompiler chacun des exercices de ce TD.
+Avant toute programmation, vous devez lire l'énoncé de l'exercice jusqu'au bout !
+I - Affichage avec caractéristiques d'un processus & synchronisation père-fils¶
+Lorsque plusieurs processus s'exécutent simultanément, il est difficile de savoir quelle ligne a été imprimée par chacun d'entre eux à l'écran. L'objectif de ce premier exercice est d'implémenter une bibliothèque (appelée par exemple affichage-processus) qui facilite la lecture des messages à l'écran dans un contexte multi-processus. La question A décrit le contenu de la bibliothèque et la question B décrit comment tester la bibliothèque.
+
+A - La bibliothèque¶
+Dans cette bibliothèque vous implémenterez 3 procédures C, prenant en paramètre une chaîne de caractère et affichant :
+
+La chaîne de caractère précédée du numéro d'identification du processus.
+La chaîne de caractère précédée du numéro d'identification de son père.
+La chaîne de caractère précédée des deux informations ci-dessus.
+B- Tests¶
+Dans trois autres fichiers C distincts vous implémenterez trois fonctions main permettant de tester votre bibliothèque.
+
+testIB1.c : Un programme qui affiche "bonjour" précédé du numéro d'identification du processus et de son père, lorsqu'on ne lui passe pas d'arguments. Si on lui passe au moins un argument, le programme affiche le premier argument.
+testIB2.c : Un programme qui se dédouble par l'appel fork et pour lequel les processus père et fils affichent respectivement "père" et "fils" précédés des mêmes informations que ci-dessus.
+testIB3.c : Que constatez vous lorsque vous exécutez plusieurs fois le programme de la question 2 ? Pour remédier à ce problème, écrivez un programme avec le même comportement que le précédent mais qui de plus garantit que le père attend la fin de l'exécution de son fils avant d'invoquer une fonction d'affichage.
+II - Recouvrement¶
+Écrire un source C qui se dédouble et pour lequel :
+
+le fils se recouvre par un nouveau processus qui exécute le programme de l'exercice I-B.1 auquel on passe l'argument Je suis le fils
+le père affiche Je suis le père (via la bibliothèque de l'exercice I-A).
+III - Lecture/écriture de fichiers et héritage des processus¶
+Lors du TD-machine 1, vous avez implémenté une bibliothèque permettant de lire et écrire des lignes dans un fichier. Vous avez ainsi du obtenir deux fichiers sources qui ressemblent fortement à ceux-ci :
+
+gestionFichiers.h
+gestionFichiers.c
+Dans cet exercice, nous allons utiliser cette bibliothèque afin de tester la sémantique de partage des fichiers entre un processus père et ses fils sous les systèmes LINUX de l'ESIEE.
+
+A - Programmation¶
+Pour cela, vous implémenterez trois fonctions main dans trois fichiers C distincts.
+
+testIII1.c : Un programme qui se dédouble, puis pour lequel chacun des deux processus ouvre le fichier fichierTest.txt donné plus bas, y lit une ligne et ferme le fichier.
+fichierTest.txt
+testIII2.c : Un programme qui ouvre le fichier, se dédouble, puis pour lequel chacun des deux processus lit une ligne dans le fichier et le ferme.
+testIII3.c : Un programme réalisant les mêmes opérations qu'à la question précédente mais pour lequel l'utilisateur peut spécifier au lancement via la ligne de commande le nom du fichier texte dans lequel il faut lire.
+Rappel
+
+Pour récupérer les arguments d'un programme en C vous devez utiliser les arguments int argc et char ** argv passé à la fonction main() (voir par exemple cette page).
+
+B - Tests et conclusion¶
+La position de lecture dans un fichier est-elle toujours partagée, toujours commune entre un père et son fils ? Discutez entre vous des différents cas possibles ? Est-ce cohérent avec ce que vous avez vu en cours ?
+
+Modifiez le programme du fichier testIII3.c de telle sorte que le processus fils lise toujours la première ligne du fichier et le père la seconde.
+

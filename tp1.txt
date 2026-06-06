@@ -1,0 +1,102 @@
+TD-Machine 1 : Lecture/écriture de fichiers & utilitaire make¶
+Objectifs¶
+S'initier à la manipulation de fichiers en C avec les appels systèmes Linux
+S'exercer à la manipulation de chaînes de caractères en C
+S'exercer à écrire et à compiler un (petit) projet avec l'utilitaire make
+S'exercer à utiliser la syntaxe ( argc, argv ) pour écrire des programmes exécutables prenant un ou plusieurs arguments
+Manipuler les descripteurs de fichiers d' entrée et sortie standard
+Débuter la programmation d'une bibliothèque qui pourra vous être utile pour la suite de l'unité
+Remarques préliminaires : environnement de développement (make et gcc)¶
+La commande make permet de compiler un programme dont les sources sont réparties sur plusieurs fichiers. Pour une description simple et suffisante pour nos séances de make et des fichiers makefile, on peut lire ce tutoriel.
+Il existe de nombreux outils très utiles au développement regroupés dans le projet GNU. Vous pouvez lire ce document d'introduction aux outils de développement GNU.
+Dans la suite de l'énoncé on appellera bibliothèque un ensemble composé d'un fichier .c et d'un fichier .h pouvant contenir des définitions de type, des fonctions et des procédures mais pas de fonction main().
+Consigne générale :
+on écrira un makefile permettant de compiler chacun des programmes demandés.
+À la fin du TD, le fait d'exécuter la commande make devra recompiler chacun des exercices de ce TD.
+Avant toute programmation, vous devez lire l'énoncé de l'exercice jusqu'au bout !
+Énoncé¶
+Au cours de l'unité plusieurs processus seront amenés à s'échanger des messages à travers différents types de "fichier" (fichiers texte, tubes, entrés/sorties standards par exemple).
+
+Il est possible grâce aux appels systèmes read() et write() d'écrire et de lire de manière générique ces fichiers quels que soient leurs types. L'objectif de cet exercice est d'initier l'implémentation en C d'une bibliothèque de lecture et écriture de fichiers. Cette bibliothèque sera appelé gestionFichiers dans la suite et se composera des fichiers gestionFichiers.h et gestionFichiers.c.
+
+Nous allons utiliser les appels systèmes
+
+open() pour ouvrir un fichier,
+close() pour le fermer et
+read() et write() pour lire et écrire à l'intérieur.
+Avant toute manipulation de ces fonctions consultez leur documentation en tapant man 2 open, man 2 read, man 2 write et man 2 close
+
+1. litDixCaracteres()¶
+L'objectif de cette première question est d'implémenter une première fonction dans la bibliothèque gestionFichiers (lecture de 10 caractères). Le prototype de cette fonction sera inclus dans le fichier gestionFichiers.h (question 1.a.). Son implémentation sera donnée dans le fichier gestionFichiers.c (question 1b). Enfin, le test d'utilisation sera codé dans le fichier test1c.c (question 1c).
+
+a. Déclaration¶
+Écrivez dans le fichier gestionFichier.h le prototype de la fonction spécifiée ci-dessous :
+
+nom : litDixCaracteres ;
+paramètre : un descripteur de fichier ;
+valeur de retour : une chaîne de caractères contenant les dix premiers caractères lus dans le fichier identifié par le descripteur passé en paramètre.
+Rappels
+
+Une chaîne de caractères en C est un tableau contenant les caractères de la chaîne suivis du caractère de fin de chaîne '\0'. Vous veillerez donc à ce que la chaîne de caractères retournée par votre fonction soit bien formatée, c'est-à-dire qu'elle se termine par le caractère de fin de chaîne '\0'. Par exemple la chaine de caractère "toto" est représentée par le tableau :
+
+0	1	2	3	4
+'t'	'o'	't'	'o'	'\0'
+Un tableau en C est référencé par l'adresse de son premier élément, c'est-à-dire par un pointeur vers son premier élément. Par exemple, le type d'un tableau d'entiers est int *.
+
+Un descripteur de fichier est un petit entier positif utilisé par le système d'exploitation pour identifier un fichier préalablement ouvert par le programme en cours d'exécution. Les appels systèmes de manipulation des fichiers utilisent ce descripteur pour identifier les fichiers à traiter.
+b. Définition¶
+Érivez dans le fichier gestionFichier.c la fonction correspondant au prototype décrit à la question 1.a..
+
+Rappels
+
+L'appel système read() sera utilisé pour lire dans un fichier. Consultez sa documentation en tapant man 2 read dans un terminal.
+La fonction malloc() permet d'allouer de la mémoire. Elle retourne l'adresse du bloc mémoire alloué. Par exemple, l'appel malloc(10 * sizeof(int)) alloue un bloc mémoire permettant de sauvegarder 10 entiers et retourne l'adresse de début de ce bloc mémoire. Consultez la documentation de malloc : man 3 malloc dans un terminal.
+c. Test¶
+Implémentez, dans le fichier test1c.c, la fonction main() permettant de tester l'unique fonction de votre bibliothèque (c'est-à-dire la fonction litDixCaracteres()). Pour cela, votre programme devra ouvrir le fichier fichierTest ci-dessous, lire ses dix premiers caractères à l'aide de litDixCaracteres() et les afficher à l'écran.
+
+fichierTest.txt
+Rappel
+
+L'appel système open() sera utilisé pour ouvrir un fichier. Consultez sa documentation en tapant man 2 open dans un terminal.
+
+d. Compilation automatisée¶
+Afin d'automatiser la compilation, écrivez le fichier makefile permettant de compiler votre bibliothèque et sa fonction de test lorsque l'on tape make dans le terminal.
+
+Rappel
+
+Pour une description simple et suffisante pour nos séances de make et des fichiers makefile, on peut lire ce tutoriel.
+
+2. litLigne()¶
+L'objectif de cette question est d'intégrer une seconde fonction dans la bibliothèque gestionFichiers. Celle ci sera un peu plus utile pour le suite de l'unité que celle implémentée en question 1.
+
+a. Déclaration et définition¶
+Intégrez à la bibliothèque gestionFichiers la fonction spécifiée ci-dessous :
+
+nom : litLigne ;
+paramètre : un descripteur de fichier ;
+valeur de retour : une chaîne de caractères correspondant à la premère ligne lue depuis le descripteur de fichier passé en paramètre, si celle-ci a une taille inférieure à une constante TAILLEBUF (que vous définirez dans la bibliothèque) ou le pointeur NULL, sinon pour indiquer un erreur.
+b. Tests¶
+Dans cinq autres fichiers C distincts vous implémenterez cinq fonctions main() permettant de tester votre bibliothèque :
+
+test2b1.c : un programme qui ouvre le fichier fichierTest.txt donné plus haut et affiche sa première ligne à l'écran.
+test2b2.c : un programme qui ouvre et affiche la première ligne du fichier passé comme argument au lancement de l'exécution du programme. Par exemple, lorsque l'on tape ./test2b fichier.txt dans un terminal, le fichier nommé fichier.txt devra être lu.
+Rappel
+
+Pour récupérer les arguments d'un programme en C vous devez utiliser les arguments int argc et char ** argv passé à la fonction main() (voir par exemple cette page).
+
+test2b3.c : un programme qui affiche toutes les lignes du fichier passé en argument.
+test2b4.c : un programme qui affiche le nombre de lignes du fichier passé en argument. Pour compter le nombre de ligne vous devez utiliser la fonction de votre bibliothèque.
+test2b5.c : que se passe-t-il si vous passez la valeur 0 en paramètre de votre fonction de lecture d'une ligne ? Implémentez, un programme permettant de répondre à cette question.
+3. Écriture¶
+a. Déclaration et Définition¶
+Ajouter à la bibliothèque gestionFichiers une procédure permettant d'écrire une chaîne de caractères dans un fichier. Cette procédure prendra donc comme paramètre un descripteur de fichier et une chaîne de caractères.
+
+b. Tests¶
+Dans trois autres fichiers C distincts vous implémenterez trois fonctions main() pour tester cette nouvelle fonction de votre bibliothèque :
+
+test3b1.c : un programme qui accepte en arguments le nom de deux fichiers et copie le contenu du premier fichier dans le second.
+test3b2.c : que se passe-t-il si vous passez la valeur 1 en paramètre de votre fonction d'écriture ? Implémentez, un programme permettant de répondre à cette question.
+test3b3.c : un programme qui recopie dans le terminal (c'est à dire sur la sortie standard) chaque ligne tapée au clavier (c'est à dire entrée sur l'entrée standard) en utilisant les fonctions de votre bibliothèque. Que doit-on taper au clavier pour terminer votre programme ?
+September 25, 2024
+ Back to top
+© Damien MASSON

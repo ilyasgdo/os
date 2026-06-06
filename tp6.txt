@@ -1,0 +1,65 @@
+Gestion de la mémoire et des fichiers¶
+I. Allocation et utilisation de la mémoire¶
+Considérez les deux fonctions suivantes
+
+
+int somme1(int **tableau, int n, int m)
+{
+   int i,j, somme;
+   somme = 0;
+   for (i=0; i < n; i++) {
+      for (j=0; j < m; j++) {
+         somme += tableau[i][j];
+      }
+   }
+   return somme;
+}
+
+int somme2(int **tableau, int n, int m)
+{
+   int i,j, somme;
+   somme = 0;
+   for (j=0; j < m; j++) {
+      for (i=0; i < n; i++) {
+         somme += tableau[i][j];
+      }
+   }
+   return somme;
+}
+a. Ecrivez deux programmes appelant respectivement les deux fonctions somme1 et somme2 pour un tableau de taille assez grande (par exemple n=m=2048; attention un tel tableau ne peut pas être déclaré statiquement (expliquez pourquoi)).
+
+b. Comparez les temps d'exécution des deux programmes de la question a. Pour cela vous pouvez utiliser la commande 'time' avec l'option '-p' au lancement des programmes depuis le terminal : 'time -p exIaSomme1'. Décrivez le résultat obtenu et expliquez la différence de temps d'exécution.
+
+c. Utilisez l'utilitaire 'valgrind' pour vérifier que les programmes de la question I.a ne comportent pas de fuite mémoire. Pour cela vous pouvez par exemple entrer 'valgrind ex1aSomme1' à l'invite de commandes. Pour obtenir des messages de valgrind indiquant les lignes de votre code source posant problème, vous devez d'abord recompiler vos programmes avec l'option '-g' (mode débogage) de 'gcc'. Si des fuites mémoires sont détectées, modifiez vos programmes jusqu'à ce qu'il n'y en ait plus.
+
+II. Copie de fichiers par mmap, write et fwrite¶
+a.
+
+Remarque préliminaire : A chaque étape du développement des programmes ci-dessous, utilisez l'utilitaire 'valgrind' pour vous aider à detecter les opérations mémoires non comformes et leurs origines dans votre code. Ces opérations non conformes pouvent en particulier conduire à des erreurs de segmentations. Utilisez également valgrind pour vous assurer que vos programmes ne comportent pas de fuite de mémoire.
+
+Utiliser read/write pour écrire une procédure de copie de fichiers.
+Ecrivez une deuxième fonction de copieur utilisant fread et fwrite.
+Ecrivez une troisième fonction de copieur utilisant mmap.
+b. Comparez les vitesses de copie des trois versions du copieur, et commentez.
+
+c. Bonus, comparez avec la vitesse de copie de votre programme de l'exercice 1 du tdm4 (copie avec deux threads).
+
+d. Bonus+, modifiez le code de litLigne() pour bufferiser les read !
+
+
+III. Algorithme de remplacement de page (sur papier)¶
+(d'après J.M. Torres, H. Boucheneb et M. Gagnon)
+
+Considérez la séquence de références de pages 0,1,2,3,4,5,4,5,6,7,8,9 faite par un processus. Montrez la séquence d'allocation des pages en mémoire pour une mémoire de 3 cadres, et pour chacun des algorithmes énumérés ci-dessous. Calculez le taux de faute de pages produit par chacun des algorithmes de remplacement de pages.
+
+L'algorithme optimal de Belady,
+L'algorithme du moins récemment utilisé,
+L'algorithme de l'horloge.
+IV. Commande strace¶
+La commande strace est utilisée pour connaitre les appels système utilisés pendant l'exécution d'un programme. Elle permet donc de regarder les interactions du programme avec le noyau. Utilisez la commande strace pour observer le comportement d'un programme de votre choix, et décrivez les appels système qui sont utilisés par le programme. Insistez en particulier sur les aspects mémoires présent lors de l'exécution de votre programme.
+
+V. Allocation mémoire¶
+Ecrivez une procédure mon_malloc et une procédure mon_free permettant d'allouer de la mémoire et de la libérer en utilisant mmap. Ecrivez un petit programme qui utilise ces deux procédures.
+
+VI. Fichiers à trou et NFS (flex...?)¶
+Ecrivez un programme qui crée un nouveau fichier, qui écrit XYZ en début de fichier, et qui écrit xyz en position 100000. Executer ce programme sur votre compte unix, puis sur /tmp. Quel est le nombre de blocs alloués pour ce fichier dans chacun des cas ?

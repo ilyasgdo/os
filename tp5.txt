@@ -1,0 +1,37 @@
+Producteur / Consommateur¶
+Dans ce travail, nous allons réaliser un programme permettant de jouer le rôle du producteur ou du consomateur avec échange de données sûre à l'aide de mémoire partagée.
+
+Exercice 1 - on se prépare...¶
+Renseignez vous un peu sur les questions suivantes :
+
+Qu'est ce qu'un fichier mappé en mémoire ? à quoi est ce que cela sert ?
+Qu'est ce qu'un sémaphore ? A quoi est-ce que cela sert ? Comment l'invoque t'on ?
+Producteur / Consommateur : Qu'est ce que c'est ?
+Et maintenant, les commandes à utiliser :
+
+les commandes liées aux sémaphores : sem_wait() et sem_post()
+la création d'un sémaphore : sem_open()
+le type sem_t
+shm_open() : création d'un objet mémoire partagé
+mmap() : mapping mémoire d'un fichier (ou d'un objet mémoire)
+shm_unlink() et sem_unlink() : petit nettoyage après utilisation
+Réfléchir maintenant à l'organisation de l'ensemble : on veut un programme qui produit de la donnée, et un autre qui consomme. Ils ne se connaissent pas vraiment (pas de tubes possible... ou alors tube nommé). Mais on veut aussi contrôler la taille de l'échange. On créé donc un espace mémoire, et on le partage. On a un sémaphore qui nous permet de contrôler qu'on s'arrête de produire si la taille limite de la mémoire partagé est atteinte. D'un autre coté, on a un consommateur qui vide l'espace, tant qu'il y a en a. Il libère le producteur, si celui-ci avait atteint la taille maximum de l'espace partagé. Les deux programmes tournent en même temps, et s'alimentent/se libèrent l'un l'autre. Y a t il besoin d'un autre sémaphore ?
+
+Exercice 2 - Le grand partage¶
+Pour des questions pratiques on mettra dans la mémoire partagée des entiers tirés aléatoirement par le producteur. Utiliser #define pour définir deux constantes MAX_FILE et MAX_RAND fixant respectivement le nombre maximal d'éléments dans la mémoire partagée et la valeur maximale des tirages aléatoire.
+
+Dans un premier temps utiliser les fonctions shm_open, ftruncate et mmap pour créer un tableau d'entiers de taille MAX_FILE en mémoire partagée. (Vous pouvez (devez ?!!) consulter les pages de manuel pour utiliser convenablement ces trois fonctions, en particulier pour déterminer les inclusions nécessaires).
+
+Exercice 3 - Sémaphores¶
+Écrire une fonction init_sem qui initialise deux sémaphores non_plein et non_vide (en utilisant sem_open). Le premier sera initialisé à MAX_FILE, le second à 0. Ces deux sémaphores seront "passés en paramètres" (à l'aide de pointeurs sur pointeurs).
+Écrire une fonction reset, sans paramètre, qui supprime les deux sémaphores.
+Écrire deux fonctions producteur et consommateur ayant comme paramètre un pointeur sur entier (le tableau d'entiers produits en mémoire partagée) tt qui réalise le protocole producteurs/consommateur.
+Dans un premier temps, la production de chaque élément se bornera à créer un entier à l'aide de la fonction random de stdlib (dans le programme principal, on aura pris soin d'initialiser le processus aléatoire à l'aide de : srandom(time(NULL));).
+La fonction random produit une valeur aléatoire entre 0 et RAND_MAX (ne pas confondre avec MAX_RAND) en faisant l'opération suivante : (int) ((random()/(double) RAND_MAX)*MAX_RAND)+1; on obtient une valeur entre 1 et MAX_RAND.
+Le consommateur se bornera à afficher chacune des valeurs lues (pour vérifier le bon fonctionnement, le producteur affichera la valeur des entiers produits).
+Exercice 4 - ... et ça roule¶
+Vous réaliserez un programme principal qui initialisera l'espace partagé ainsi que les sémaphores, puis qui, selon la valeur des paramètres du programme (utiliser argv) lance producteur, consommateur ou reset. Un squelette de code vous est fourni pour vous aider :
+squelette.c
+Ajouter une option qui permet de modifier le fonctionnement de producteur et consommateurs pour être exécuté "étapes par étapes" : l'utilisateur devra appuyer sur une touche (puis entrée) pour que le processus se poursuive. Cela permettra de vérifier le bon comportement des productions/consommations.
+Rendu¶
+Envoyer votre travail sous forme d'une archive contenant les sources sur blackboard - ce n'est pas grave si vous n'avez pas fini !

@@ -18,28 +18,16 @@ void usage() {
 
 int * init_sem_mem(sem_t ** vide, sem_t ** plein){
     int des = shm_open("/memoire", O_CREAT | O_RDWR, 0644);
-    if(des == -1){
-        perror("err shm open ");
-        exit(1);
-    }
-    if(ftruncate(des, MAX_FILE * sizeof(int)) != 0){
-        perror("err truncate");
-       
-    }
-
+    if(des == -1){perror("err shm open ");exit(1);}
+    if(ftruncate(des, MAX_FILE * sizeof(int)) != 0){perror("err truncate");  }
     int * tab = mmap(NULL, MAX_FILE * sizeof(int), PROT_WRITE | PROT_READ , MAP_SHARED, des ,0);
-    if(tab == MAP_FAILED){
-        perror("err mmap");
-        exit(1);
-    }
-    close(des); // On ferme le descripteur devenu inutile
-
+    if(tab == MAP_FAILED){perror("err mmap");exit(1);}
+    close(des); 
     *vide = sem_open("/sem_vide", O_CREAT , 0644, MAX_FILE);
     if(*vide == SEM_FAILED){
         perror("err sem open vide");
         exit(1);
     }
-    
     *plein = sem_open("/sem_plein", O_CREAT, 0644, 0);
     if(*plein == SEM_FAILED){
         perror("err sem open plein");

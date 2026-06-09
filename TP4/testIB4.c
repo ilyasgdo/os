@@ -27,7 +27,7 @@ int main()  {
     pthread_t t3;
 
     pthread_create(&t1,NULL,codeduthread,(void*)1);
-    pthread_create(&t2,NULL,codeduthread,(void*)3);
+    pthread_create(&t2,NULL,codeduthread,(void*)2);
     pthread_create(&t3,NULL,codeduthread,(void*)3);
 
     pthread_join(t1,NULL);

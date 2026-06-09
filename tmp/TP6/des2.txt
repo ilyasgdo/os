@@ -19,9 +19,8 @@ int copieFichier(){
     memcpy(tdes,tsrc,taille);
     munmap(tsrc,taille);
     munmap(tdes,taille);
-    close(src);
-        close(des);
-
+    shm_unlink("./test4.c");
+    shm_unlink("./des2.txt");
     return 0;
     
 }
